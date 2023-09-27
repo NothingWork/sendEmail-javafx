@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="943.0" prefWidth="1531.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycom.mailapp.mailsendsystem.controller.MainFrameController">
+   <children>
+      <Accordion layoutX="179.0" layoutY="27.0" />
+      <Label layoutX="68.0" layoutY="27.0" prefHeight="44.0" prefWidth="136.0" text="收件人姓名：">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <TextField fx:id="reciveNameText" layoutX="225.0" layoutY="34.0" prefHeight="30.0" prefWidth="375.0">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </TextField>
+      <Label layoutX="69.0" layoutY="166.0" prefHeight="44.0" prefWidth="128.0" text="发件人邮箱：">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <TextField fx:id="sendEmailText" layoutX="225.0" layoutY="167.0" prefHeight="30.0" prefWidth="375.0" promptText="必填">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </TextField>
+      <HTMLEditor fx:id="contentText" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" layoutX="225.0" layoutY="294.0" prefHeight="385.0" prefWidth="932.0" />
+      <Label layoutX="68.0" layoutY="245.0" prefHeight="44.0" prefWidth="113.0" text="邮件主题：">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Button fx:id="attachments" layoutX="649.0" layoutY="247.0" mnemonicParsing="false" onAction="#attach" prefHeight="34.0" prefWidth="85.0" text="添加附件" />
+      <Label layoutX="650.0" layoutY="36.0" text="收件人邮箱：">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <TextField fx:id="reciveEmailText" layoutX="793.0" layoutY="34.0" prefHeight="30.0" prefWidth="375.0" promptText="必填">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </TextField>
+      <Label layoutX="68.0" layoutY="102.0" prefHeight="44.0" prefWidth="136.0" text="收件人地址：">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <TextField fx:id="addressText" layoutX="225.0" layoutY="104.0" prefHeight="41.0" prefWidth="375.0">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </TextField>
+      <Label layoutX="650.0" layoutY="167.0" prefHeight="44.0" prefWidth="128.0" text="邮箱授权码：">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <TextField fx:id="codeText" layoutX="793.0" layoutY="167.0" prefHeight="30.0" prefWidth="375.0" promptText="必填">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </TextField>
+      <DatePicker fx:id="dateText" editable="false" layoutX="225.0" layoutY="703.0" prefHeight="34.0" prefWidth="243.0" />
+      <Label layoutX="68.0" layoutY="698.0" prefHeight="44.0" prefWidth="113.0" text="发送时间：">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <TextField fx:id="hourText" layoutX="501.0" layoutY="700.0" prefHeight="36.0" prefWidth="73.0" text="00">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </TextField>
+      <TextField fx:id="minuteText" layoutX="586.0" layoutY="700.0" prefHeight="36.0" prefWidth="73.0" text="00">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </TextField>
+      <TextField fx:id="secondText" layoutX="669.0" layoutY="700.0" prefHeight="36.0" prefWidth="73.0" text="00">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </TextField>
+      <Label layoutX="578.0" layoutY="705.0" text=":">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Label layoutX="662.0" layoutY="705.0" text=":">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Button fx:id="addApplication" layoutX="1104.0" layoutY="813.0" mnemonicParsing="false" onAction="#addApplication" prefHeight="34.0" prefWidth="99.0" text="添加任务" />
+      <CheckBox fx:id="isRepeat" layoutX="1104.0" layoutY="737.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="99.0" text="重复发送" />
+      <Button layoutX="957.0" layoutY="815.0" mnemonicParsing="false" onAction="#resetFields" prefHeight="34.0" prefWidth="92.0" text="清空" textFill="#eb0000" />
+      <TextField fx:id="subjectText" layoutX="225.0" layoutY="242.0" prefHeight="30.0" prefWidth="375.0">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </TextField>
+      <Label fx:id="attachLabel" layoutX="803.0" layoutY="253.0">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Label layoutX="650.0" layoutY="111.0" text="邮箱服务器：">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <TextField fx:id="serverText" layoutX="793.0" layoutY="104.0" prefHeight="41.0" prefWidth="375.0" promptText="必填">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </TextField>
+      <ListView fx:id="tasklist" layoutX="1242.0" layoutY="73.0" onMouseClicked="#change" prefHeight="270.0" prefWidth="265.0" />
+      <Label layoutX="1242.0" layoutY="36.0" text="任务列表：">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Button fx:id="removeBtn" layoutX="1242.0" layoutY="387.0" mnemonicParsing="false" onAction="#removeTask" text="删除当前任务" textFill="#ff0909" />
+
+   </children>
+</AnchorPane>
