@@ -152,11 +152,6 @@
             <Font size="20.0" />
          </font>
       </Label>
-      <ToolBar layoutX="14.0" layoutY="340.0" prefHeight="40.0" prefWidth="200.0">
-        <items>
-          <Button mnemonicParsing="false" text="Button" />
-        </items>
-      </ToolBar>
       <HBox fx:id="hbox" layoutX="794.0" layoutY="217.0" prefHeight="69.0" prefWidth="375.0" />
       <Button fx:id="showLogsBtn" layoutX="1201.0" layoutY="797.0" mnemonicParsing="false" onAction="#showLogs" prefHeight="50.0" prefWidth="156.0" text="日志">
          <font>

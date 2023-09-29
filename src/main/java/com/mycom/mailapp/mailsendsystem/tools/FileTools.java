@@ -18,13 +18,13 @@ import java.util.*;
  */
 public class FileTools {
     //任务配置文件存放路径，附件文件夹，执行日志文件夹
-    public final String logPath = "logs";
-    public final String taskFilePath="tasks";
-    public final String attachesPath="attaches/";
-//    public final String taskFilePath="src/main/resources/tasks";
-//
-//    public final String attachesPath="src/main/resources/attaches/";
-//    public final String logPath="src/main/resources/logs";
+//    public final String logPath = "logs";
+//    public final String taskFilePath="tasks";
+//    public final String attachesPath="attaches/";
+    public final String taskFilePath="src/main/resources/tasks";
+
+    public final String attachesPath="src/main/resources/attaches/";
+    public final String logPath="src/main/resources/logs";
 
     //读取某个具体配置文件
     public Map<String,String> readReturnMap(String propertiesFilePath) {
@@ -89,13 +89,23 @@ public class FileTools {
         file.delete();
     }
     //文件复制
-    public void copyFile(String sourcepath,String targetpath) throws IOException {
+    public void copyFile(String sourcepath,String targetpath){
         Path path1 = Paths.get(sourcepath);
         Path path2 = Paths.get(targetpath);
-        //文件复制,名字也会复制过去
-        // Files.copy(sourcePath,targetPath.resolve(sourcePath.getFileName()));
         //文件复制,文件名字也会复制过去
-        Files.copy(path1,path2.resolve(path1.getFileName()));
+        try {
+            Files.copy(path1,path2.resolve(path1.getFileName()));
+        } catch (IOException e) {
+            //复制失败证明源文件已经存在，此时两种情况
+            //1.目标文件与源文件只想同一个地址，那么不进行复制操作
+            //2.目标地址存在与源文件同名的文件，那么进行覆盖后再次进行复制
+            File file = new File(sourcepath);
+            String str = targetpath+"/"+file.getName();
+            if(!str.equals(sourcepath)){
+                removeFiles(str);
+                copyFile(sourcepath,targetpath);
+            }
+        }
     }
     //写入日志文件
     public void writeLogs(String filePath,String text){

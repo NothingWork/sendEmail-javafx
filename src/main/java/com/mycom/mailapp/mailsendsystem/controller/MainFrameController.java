@@ -19,7 +19,6 @@ import javax.mail.MessagingException;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -27,7 +26,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.*;
 import java.util.regex.Pattern;
-
 
 /**
  * @author Yun
@@ -244,6 +242,7 @@ public class MainFrameController {
         //填充任务名称
         ObservableList<String> fileList = fileTools.getFileList(fileTools.taskFilePath);
         tasklist.setItems(fileList);
+        //设置功能性按钮禁用
         refreshBtn.setDisable(true);
         removeBtn.setDisable(true);
     }
@@ -380,27 +379,42 @@ public class MainFrameController {
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
-                        //向文件夹中存放附件
+                        //修改附件文件夹中的附件
                         String folderName = textField.getText().replaceAll(" ","")+label.getText();
                         File folder = new File(fileTools.attachesPath+folderName);
                         if(!folder.exists()){folder.mkdir();}
-                        for (String path:selectedFilePath
-                        ) {
-                            try {
-                                File sourceFile = new File(path);
-                                String fileName = sourceFile.getName();
-                                //存在同名文件则直接进行删除替换
-                                String targetFile = fileTools.attachesPath+folderName+"/"+fileName;
-                                if(!path.equals(targetFile)){
-                                    if(new File(targetFile).exists()){
-                                        fileTools.removeFiles(targetFile);
-                                    }
-                                    fileTools.copyFile(path,fileTools.attachesPath+folderName);
+                        File[] files = folder.listFiles();
+                        //路径数组不为空，添加对应附件
+                        if(!selectedFilePath.isEmpty()){
+                            for (String path:selectedFilePath
+                            ) {
+                                fileTools.copyFile(path,fileTools.attachesPath+folderName);
+                            }
+                            //如果文件夹中存在路径数组中不包含的文件则进行删除
+                            if(selectedFilePath.size()<files.length){
+                                //获取一个路径数组中文件名字的集合
+                                List<String> nameList = new ArrayList<>();
+                                for (String path:selectedFilePath
+                                     ) {
+                                    nameList.add(new File(path).getName());
                                 }
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
+                                //如果文件夹中存在多余的文件则进行删除
+                                for (File file:files
+                                     ) {
+                                    if(!nameList.contains(file.getName())){fileTools.removeFiles(file.getPath());}
+                                }
                             }
                         }
+                        //路径数组为空,但文件夹中有文件，删除原文件夹中所有文件
+                        else {
+                            if (files != null) {
+                                for (File file:files
+                                     ) {
+                                    fileTools.removeFiles(file.getPath());
+                                }
+                            }
+                        }
+
                     }
                 }
                 // 取消创建
@@ -420,8 +434,6 @@ public class MainFrameController {
         }
 
     }
-
-
  //更新执行邮件发送的定时器，在初始化界面、添加新任务后执行一次
     void setTimer() throws ParseException {
         Date date;
@@ -465,7 +477,6 @@ public class MainFrameController {
             }
         }
     }
-
     //添加一个带标签和删除按钮的toolbar控件，接收一个string作为标签内容,一个文件路径用于删除
     void addToolbar(String str,String filepath){
         //添加一个toolbar展示添加的附件
