@@ -6,6 +6,7 @@ import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.*;
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
@@ -19,7 +20,7 @@ public class SendMailTools {
     //创建不带附件的邮件邮件
     public MimeMessage createSimpleMimeMessage(Session session,
                                                String sendMail,
-                                               String receiveMail,
+                                               String[] receiveMail,
                                                String subject,
                                                String content)
             throws UnsupportedEncodingException, javax.mail.MessagingException {
@@ -28,8 +29,12 @@ public class SendMailTools {
         // 2.From：发件人
         mimeMessage.setFrom(new InternetAddress(sendMail, sendMail, "UTF-8"));
         // 3.To：收件人（可以增加多个收件人、抄送、密送）
-        mimeMessage.setRecipients(MimeMessage.RecipientType.TO, new InternetAddress[]{new InternetAddress(receiveMail
-                , receiveMail, "UTF-8")});
+         //为多个收件人创建地址
+        InternetAddress[] internetAddresses = new InternetAddress[receiveMail.length];
+        for(int i=0;i< receiveMail.length;i++){
+            internetAddresses[i] = new InternetAddress(receiveMail[i],receiveMail[i],"UTF-8");
+        }
+        mimeMessage.setRecipients(MimeMessage.RecipientType.TO,internetAddresses);
         // 4.邮件主题
         mimeMessage.setSubject(subject, "UTF-8");
         // 5.Content：邮件正文（可以用HTML标签）
@@ -45,7 +50,7 @@ public class SendMailTools {
     //创建带附件的邮件
     public MimeMessage createConflexMimeMessage(Session session,
                                                 String sendMail,
-                                                String receiveMail,
+                                                String[] receiveMail,
                                                 String subject,
                                                 String content,
                                                 String filePath)
@@ -57,17 +62,33 @@ public class SendMailTools {
         message.setFrom(new InternetAddress(sendMail, sendMail, "UTF-8"));
 
         // 3.TO：收件人（可以增加多个收件人、抄送、密送）
-        message.addRecipients(MimeMessage.RecipientType.TO, new InternetAddress[]{new InternetAddress(receiveMail,
-                receiveMail, "UTF-8")});
+        //为多个收件人创建地址
+        InternetAddress[] internetAddresses = new InternetAddress[receiveMail.length];
+        for(int i=0;i< receiveMail.length;i++){
+            internetAddresses[i] = new InternetAddress(receiveMail[i],receiveMail[i],"UTF-8");
+        }
+        message.addRecipients(MimeMessage.RecipientType.TO, internetAddresses);
 
         // 4.Subject：邮件主题
         message.setSubject(subject, "UTF-8");
 
         // 5.创建附件”节点“
-        MimeBodyPart attachment = new MimeBodyPart();
-        DataHandler dataHandler = new DataHandler(new FileDataSource(filePath));
-        attachment.setDataHandler(dataHandler);
-        attachment.setFileName(MimeUtility.encodeText(dataHandler.getName()));
+        File[] files = new File(filePath).listFiles();
+        List<MimeBodyPart> mimeBodyParts = new ArrayList<>();
+        if (files != null) {
+            for (File file:files
+                 ) {
+                MimeBodyPart attachment = new MimeBodyPart();
+                DataHandler dataHandler = new DataHandler(new FileDataSource(file.getPath()));
+                attachment.setDataHandler(dataHandler);
+                attachment.setFileName(MimeUtility.encodeText(dataHandler.getName()));
+                mimeBodyParts.add(attachment);
+            }
+        }
+//        MimeBodyPart attachment = new MimeBodyPart();
+//        DataHandler dataHandler = new DataHandler(new FileDataSource(filePath));
+//        attachment.setDataHandler(dataHandler);
+//        attachment.setFileName(MimeUtility.encodeText(dataHandler.getName()));
 
         // 6.创建文本”节点“
         MimeBodyPart text = new MimeBodyPart();
@@ -76,7 +97,10 @@ public class SendMailTools {
         // 7.设置文本和附件的关系（合成一个大的混合的节点）
         MimeMultipart totalPart = new MimeMultipart();
         totalPart.addBodyPart(text);
-        totalPart.addBodyPart(attachment);// 如果有多个附件，可以创建多个多次添加
+        for (MimeBodyPart mime:mimeBodyParts
+             ) {
+            totalPart.addBodyPart(mime);// 如果有多个附件，可以创建多个多次添加
+        }
         totalPart.setSubType("mixed");
 
         // 8.设置整个邮件的关系（将最终的混合节点作为邮件的内容）
@@ -92,12 +116,12 @@ public class SendMailTools {
     }
     //发送邮件
     public void sendEmail(String sendEmail,
-                          String receviceEmail,
+                          String receiveEmail,
                           String subject,
                           String content,
                           String code,
                           String server,
-                          String selectedFilePath) throws MessagingException, UnsupportedEncodingException {
+                          String attachFilePath) throws MessagingException, UnsupportedEncodingException {
         // 1.创建参数配置, 用于连接邮件服务器的参数配置
         Properties properties = new Properties();
         properties.setProperty("mail.transport.protocol", "smtp");
@@ -108,11 +132,15 @@ public class SendMailTools {
         Session session = Session.getInstance(properties);
         session.setDebug(true);
         // 3.创建一封简单或复杂邮件
+         //收件人地址的分割,中文逗号替换为英文
+            receiveEmail =  receiveEmail.replace("，",",");
+            String[] receives = receiveEmail.split(",");
         MimeMessage message = null;
-        if (selectedFilePath.equals("")) {
-            message = createSimpleMimeMessage(session, sendEmail, receviceEmail, subject, content);
+        File folder = new File(attachFilePath);
+        if (!folder.exists()) {
+            message = createSimpleMimeMessage(session, sendEmail, receives, subject, content);
         } else {
-            message = createConflexMimeMessage(session, sendEmail, receviceEmail, subject, content, selectedFilePath);
+            message = createConflexMimeMessage(session, sendEmail, receives, subject, content, attachFilePath);
         }
 
         // 4.根据Session获取邮件传输对象

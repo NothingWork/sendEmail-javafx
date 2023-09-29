@@ -1,7 +1,10 @@
 package com.mycom.mailapp.mailsendsystem.tools;
 
-import javafx.scene.control.Label;
-import javafx.scene.control.TextInputControl;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.web.HTMLEditor;
 
 import java.util.regex.Matcher;
@@ -52,6 +55,20 @@ public class JavaFxTools {
         for (Label label : labels) {
             label.setText("");
         }
+    }
+    //为控件设置图标方法
+    public void setLabeledImage(Labeled[] labeleds, String[] imagePaths) {
+        for (int i = 0; i < labeleds.length; i++) {
+            Image image = new Image(imagePaths[i]);
+            ImageView imageView = new ImageView(image);
+            imageView.setFitHeight(25);
+            imageView.setFitWidth(25);
+            labeleds[i].setGraphic(imageView);
+        }
+    }
+    //根据各个任务的执行时间，是否重复添加对应的状态
+    public void getTaskStage(){
+
     }
 
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="665.0" prefWidth="1063.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycom.mailapp.mailsendsystem.controller.LogsFrameController">
+   <children>
+      <Label layoutX="33.0" layoutY="14.0" prefHeight="48.0" prefWidth="197.0" text="日志记录">
+         <font>
+            <Font size="31.0" />
+         </font>
+      </Label>
+      <TextArea fx:id="logsText" editable="false" layoutX="33.0" layoutY="72.0" prefHeight="572.0" prefWidth="1003.0" />
+   </children>
+</AnchorPane>

@@ -6,6 +6,7 @@ import javafx.stage.FileChooser;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -16,9 +17,15 @@ import java.util.*;
  * @date 2023/9/24
  */
 public class FileTools {
-    //任务配置文件存放路径
-    //public final String taskFilePath="tasks";
-    public final String taskFilePath="src/main/resources/tasks";
+    //任务配置文件存放路径，附件文件夹，执行日志文件夹
+    public final String logPath = "logs";
+    public final String taskFilePath="tasks";
+    public final String attachesPath="attaches/";
+//    public final String taskFilePath="src/main/resources/tasks";
+//
+//    public final String attachesPath="src/main/resources/attaches/";
+//    public final String logPath="src/main/resources/logs";
+
     //读取某个具体配置文件
     public Map<String,String> readReturnMap(String propertiesFilePath) {
         Properties properties = new Properties();
@@ -46,7 +53,7 @@ public class FileTools {
     }
     //读取邮件要发送的附件文件
     public File getSelectedFile() {
-        String selectedFilePath = "";
+        String selectedFilePath ="";
         //实例化文件选择器
         FileChooser fileChooser = new FileChooser();
         //打开文件选择框
@@ -54,8 +61,9 @@ public class FileTools {
         // 选择文件的路径
         if(result!=null){
             selectedFilePath = result.getAbsolutePath();
+            return new File(selectedFilePath);
         }
-        return new File(selectedFilePath);
+        return null;
     }
   //读取文件列表，查看都有什么任务
     public ObservableList<String> getFileList(String filePath){
@@ -76,9 +84,37 @@ public class FileTools {
         return strList;
     }
     //删除文件
-    public void removeTasks(String filepath){
+    public void removeFiles(String filepath){
         File file = new File(filepath);
         file.delete();
+    }
+    //文件复制
+    public void copyFile(String sourcepath,String targetpath) throws IOException {
+        Path path1 = Paths.get(sourcepath);
+        Path path2 = Paths.get(targetpath);
+        //文件复制,名字也会复制过去
+        // Files.copy(sourcePath,targetPath.resolve(sourcePath.getFileName()));
+        //文件复制,文件名字也会复制过去
+        Files.copy(path1,path2.resolve(path1.getFileName()));
+    }
+    //写入日志文件
+    public void writeLogs(String filePath,String text){
+        try {
+            // 创建一个File对象，指定文件路径和名称
+            File file = new File(filePath);
+            // 如果文件不存在，则创建一个新文件
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            // 使用FileWriter和BufferedWriter将内容写入文件
+            FileWriter fileWriter = new FileWriter(file, true);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            bufferedWriter.write(text+System.lineSeparator());
+            // 关闭BufferedWriter
+            bufferedWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

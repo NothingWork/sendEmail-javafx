@@ -1,18 +1,24 @@
 package com.mycom.mailapp.mailsendsystem;
 
+import com.mycom.mailapp.mailsendsystem.controller.LogsFrameController;
+import com.mycom.mailapp.mailsendsystem.tools.FileTools;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.ParseException;
 
 
@@ -20,7 +26,7 @@ public class MainApp extends Application {
     private Stage primaryStage;
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws MalformedURLException {
         Platform.setImplicitExit(false);
         this.primaryStage = primaryStage;
         // 设置标题
@@ -29,8 +35,8 @@ public class MainApp extends Application {
         primaryStage.getIcons().add(new Image("images/sendEmail.png"));
         //生成系统托盘
         SystemTray systemTray = SystemTray.getSystemTray();
+        java.awt.Image image = Toolkit.getDefaultToolkit().getImage("images/icon.png");
 
-        java.awt.Image image = Toolkit.getDefaultToolkit().getImage("src/main/resources/images/icon.png");
         PopupMenu popupMenu = new PopupMenu();
         MenuItem item1 = new MenuItem("主界面");
         MenuItem item2 = new MenuItem("退出");
@@ -92,9 +98,54 @@ public class MainApp extends Application {
             e.printStackTrace();
         }
     }
+    //加载日志窗口
+    /**
+     * 加载设置界面
+     */
+    public void initLogsFrame(){
+        try {
+            // 加载FXML文件
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/view/LogsFrame.fxml"));
+            Parent root = loader.load();
+            // 实例化舞台
+            Stage stage = new Stage();
+            // 设置标题
+            stage.setTitle("日志");
+            // 设置该界面不可缩放
+            stage.setResizable(true);
+            // 设置该界面总是处于最顶端
+            stage.setAlwaysOnTop(true);
+            // 设置模态窗口,该窗口阻止事件传递到任何其他应用程序窗口
+            stage.initModality(Modality.APPLICATION_MODAL);
+            // 设置主容器为主界面舞台
+            stage.initOwner(primaryStage);
+
+            // 实例化场景
+            Scene scene = new Scene(root);
+            // 将场景设置到舞台上
+            stage.setScene(scene);
+            //设置controller
+            LogsFrameController controller = loader.getController();
+            controller.setStage(stage);
+            // 展示舞台
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) throws ParseException {
-        //测试
+        //检查资源完整性
+        FileTools fileTools = new FileTools();
+        String[] files = {fileTools.taskFilePath, fileTools.attachesPath, fileTools.logPath};
+        for (String str:files
+             ) {
+            File folder = new File(str);
+            if(!folder.exists()){
+                folder.mkdir();
+            }
+        }
         //启动主界面窗口
         launch(args);
     }

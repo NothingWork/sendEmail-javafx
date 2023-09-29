@@ -19,12 +19,12 @@
             <Font size="20.0" />
          </font>
       </TextField>
-      <Label layoutX="69.0" layoutY="166.0" prefHeight="44.0" prefWidth="128.0" text="发件人邮箱：">
+      <Label layoutX="644.0" layoutY="33.0" prefHeight="44.0" prefWidth="128.0" text="发件人邮箱：">
          <font>
             <Font size="20.0" />
          </font>
       </Label>
-      <TextField fx:id="sendEmailText" layoutX="225.0" layoutY="167.0" prefHeight="30.0" prefWidth="375.0" promptText="必填">
+      <TextField fx:id="sendEmailText" layoutX="793.0" layoutY="43.0" prefHeight="30.0" prefWidth="375.0" promptText="必填">
          <font>
             <Font size="20.0" />
          </font>
@@ -35,18 +35,21 @@
             <Font size="20.0" />
          </font>
       </Label>
-      <Button fx:id="attachments" layoutX="649.0" layoutY="247.0" mnemonicParsing="false" onAction="#attach" prefHeight="34.0" prefWidth="85.0" text="添加附件" />
-      <Label layoutX="650.0" layoutY="36.0" text="收件人邮箱：">
+      <Button fx:id="attachments" layoutX="646.0" layoutY="237.0" mnemonicParsing="false" onAction="#attach" prefHeight="44.0" prefWidth="128.0" text="添加附件">
+         <font>
+            <Font size="18.0" />
+         </font></Button>
+      <Label layoutX="66.0" layoutY="176.0" text="收件人邮箱：">
          <font>
             <Font size="20.0" />
          </font>
       </Label>
-      <TextField fx:id="reciveEmailText" layoutX="793.0" layoutY="34.0" prefHeight="30.0" prefWidth="375.0" promptText="必填">
+      <TextField fx:id="reciveEmailText" layoutX="225.0" layoutY="169.0" prefHeight="30.0" prefWidth="375.0" promptText="必填">
          <font>
             <Font size="20.0" />
          </font>
       </TextField>
-      <Label layoutX="68.0" layoutY="102.0" prefHeight="44.0" prefWidth="136.0" text="收件人地址：">
+      <Label layoutX="68.0" layoutY="101.0" prefHeight="44.0" prefWidth="136.0" text="收件人地址：">
          <font>
             <Font size="20.0" />
          </font>
@@ -56,17 +59,17 @@
             <Font size="20.0" />
          </font>
       </TextField>
-      <Label layoutX="650.0" layoutY="167.0" prefHeight="44.0" prefWidth="128.0" text="邮箱授权码：">
+      <Label layoutX="646.0" layoutY="167.0" prefHeight="44.0" prefWidth="128.0" text="邮箱授权码：">
          <font>
             <Font size="20.0" />
          </font>
       </Label>
-      <TextField fx:id="codeText" layoutX="793.0" layoutY="167.0" prefHeight="30.0" prefWidth="375.0" promptText="必填">
+      <TextField fx:id="codeText" layoutX="793.0" layoutY="169.0" prefHeight="30.0" prefWidth="375.0" promptText="必填">
          <font>
             <Font size="20.0" />
          </font>
       </TextField>
-      <DatePicker fx:id="dateText" editable="false" layoutX="225.0" layoutY="703.0" prefHeight="34.0" prefWidth="243.0" />
+      <DatePicker fx:id="dateText" editable="false" layoutX="225.0" layoutY="703.0" onAction="#datePicked" prefHeight="34.0" prefWidth="243.0" />
       <Label layoutX="68.0" layoutY="698.0" prefHeight="44.0" prefWidth="113.0" text="发送时间：">
          <font>
             <Font size="20.0" />
@@ -97,20 +100,24 @@
             <Font size="20.0" />
          </font>
       </Label>
-      <Button fx:id="addApplication" layoutX="1104.0" layoutY="813.0" mnemonicParsing="false" onAction="#addApplication" prefHeight="34.0" prefWidth="99.0" text="添加任务" />
-      <CheckBox fx:id="isRepeat" layoutX="1104.0" layoutY="737.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="99.0" text="重复发送" />
-      <Button layoutX="957.0" layoutY="815.0" mnemonicParsing="false" onAction="#resetFields" prefHeight="34.0" prefWidth="92.0" text="清空" textFill="#eb0000" />
+      <Button fx:id="addApplication" layoutX="943.0" layoutY="797.0" mnemonicParsing="false" onAction="#addApplication" prefHeight="50.0" prefWidth="145.0" text="添加任务">
+         <font>
+            <Font size="18.0" />
+         </font></Button>
+      <CheckBox fx:id="isRepeat" layoutX="943.0" layoutY="712.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="145.0" text="每周发送">
+         <font>
+            <Font size="18.0" />
+         </font></CheckBox>
+      <Button fx:id="clear" layoutX="757.0" layoutY="797.0" mnemonicParsing="false" onAction="#resetFields" prefHeight="50.0" prefWidth="145.0" text="清空" textFill="#eb0000">
+         <font>
+            <Font size="18.0" />
+         </font></Button>
       <TextField fx:id="subjectText" layoutX="225.0" layoutY="242.0" prefHeight="30.0" prefWidth="375.0">
          <font>
             <Font size="20.0" />
          </font>
       </TextField>
-      <Label fx:id="attachLabel" layoutX="803.0" layoutY="253.0">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
-      <Label layoutX="650.0" layoutY="111.0" text="邮箱服务器：">
+      <Label layoutX="645.0" layoutY="111.0" text="邮箱服务器：">
          <font>
             <Font size="20.0" />
          </font>
@@ -120,13 +127,42 @@
             <Font size="20.0" />
          </font>
       </TextField>
-      <ListView fx:id="tasklist" layoutX="1242.0" layoutY="73.0" onMouseClicked="#change" prefHeight="270.0" prefWidth="265.0" />
-      <Label layoutX="1242.0" layoutY="36.0" text="任务列表：">
+      <ListView fx:id="tasklist" layoutX="1202.0" layoutY="73.0" onMouseClicked="#change" prefHeight="270.0" prefWidth="305.0" />
+      <Label layoutX="1202.0" layoutY="36.0" text="任务列表：">
          <font>
             <Font size="20.0" />
          </font>
       </Label>
-      <Button fx:id="removeBtn" layoutX="1242.0" layoutY="387.0" mnemonicParsing="false" onAction="#removeTask" text="删除当前任务" textFill="#ff0909" />
+      <Button fx:id="removeBtn" layoutX="1202.0" layoutY="447.0" mnemonicParsing="false" onAction="#removeTask" prefHeight="50.0" prefWidth="156.0" text="删除当前任务" textFill="#ff0909">
+         <font>
+            <Font size="18.0" />
+         </font></Button>
+      <Button fx:id="refreshBtn" layoutX="1202.0" layoutY="362.0" mnemonicParsing="false" onAction="#refreshTask" prefHeight="50.0" prefWidth="156.0" text="更新当前任务">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Label layoutX="501.0" layoutY="762.0" prefHeight="44.0" prefWidth="128.0" text="当前选中：">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Label fx:id="week" layoutX="605.0" layoutY="762.0" prefHeight="44.0" prefWidth="128.0">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <ToolBar layoutX="14.0" layoutY="340.0" prefHeight="40.0" prefWidth="200.0">
+        <items>
+          <Button mnemonicParsing="false" text="Button" />
+        </items>
+      </ToolBar>
+      <HBox fx:id="hbox" layoutX="794.0" layoutY="217.0" prefHeight="69.0" prefWidth="375.0" />
+      <Button fx:id="showLogsBtn" layoutX="1201.0" layoutY="797.0" mnemonicParsing="false" onAction="#showLogs" prefHeight="50.0" prefWidth="156.0" text="日志">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
 
    </children>
 </AnchorPane>
