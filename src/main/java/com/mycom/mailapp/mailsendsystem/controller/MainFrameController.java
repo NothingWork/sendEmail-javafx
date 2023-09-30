@@ -39,6 +39,8 @@ public class MainFrameController {
     //
     //定时器
     private Timer timer;
+    //week滑动条的值
+    private int sliderValue;
     @FXML
     private DatePicker dateText;
     @FXML
@@ -81,7 +83,8 @@ public class MainFrameController {
     private Label week;
     @FXML
     private HBox hbox;
-
+    @FXML
+    private Slider weekSlider;
     @FXML
     private Button showLogsBtn;
 
@@ -92,6 +95,8 @@ public class MainFrameController {
 
     @FXML
     void initialize() throws ParseException {
+        //清空界面
+        resetFields();
         //为按钮渲染图标
         javaFxTools.setLabeledImage(
                 new Labeled[]{
@@ -113,28 +118,32 @@ public class MainFrameController {
     }
     //重置按纽，清空页面文本域和附件
     @FXML
-    void resetFields(ActionEvent event) {
+    void resetFields() {
+        //文本域的清空
         javaFxTools.reset(reciveEmailText,reciveNameText,addressText,sendEmailText,codeText,serverText);
         javaFxTools.resetTime(hourText,minuteText,secondText);
         javaFxTools.resetHTML(contentText);
+        week.setText("");
+        //成员变量清空
         if(selectedFilePath!=null){selectedFilePath.clear();}
+        sliderValue = 0;
+        //特殊控件状态清空
         dateText.setValue(null);
         isRepeat.setSelected(false);
         hbox.getChildren().clear();
-
-        //测试新功能
-        example();
-
+        weekSlider.setVisible(false);
     }
 
-    //点击列表中某项，改变页面展示
+    //点击列表中某项，改变页面展示,加if防止点击空白处时触发
     @FXML
     void change(MouseEvent event) {
-        //填充页面
-        showMail(tasklist.getSelectionModel().getSelectedItem());
-        //启用删除按钮和更新任务按钮
-        removeBtn.setDisable(false);
-        refreshBtn.setDisable(false);
+        if(!tasklist.getSelectionModel().isEmpty()){
+            //填充页面
+            showMail(tasklist.getSelectionModel().getSelectedItem());
+            //启用删除按钮和更新任务按钮
+            removeBtn.setDisable(false);
+            refreshBtn.setDisable(false);
+        }
     }
 
     //点击完成配置按钮,会创建一个properties文件存放邮件数据
@@ -162,7 +171,10 @@ public class MainFrameController {
     //删除任务按钮
     @FXML
     void removeTask(ActionEvent event) {
-        deleteTask(tasklist.getSelectionModel().getSelectedItem(),true);
+        deleteTask(tasklist.getSelectionModel().getSelectedItem());
+        //设置功能性按钮禁用
+        refreshBtn.setDisable(true);
+        removeBtn.setDisable(true);
     }
 
     //点击更新当前任务按钮，根据页面信息更新当前选中任务
@@ -178,7 +190,7 @@ public class MainFrameController {
             int after = tasklist.getItems().size();
             //3.数量加一则删除旧的任务，数量不变则直接覆盖旧的任务
             if(after>before){
-                deleteTask(str,false);
+                deleteTaskFiles(str);
                 showTasks();
             }
         }
@@ -186,9 +198,10 @@ public class MainFrameController {
     //当日期控件被选择时，填充选中的日期为周几的提示信息
     @FXML
     void datePicked(ActionEvent event) {
+        if(dateText.getValue()!=null){
         if(!dateText.getValue().toString().isEmpty()){
-            String Week = dateText.getValue().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.getDefault());
-            week.setText(Week);
+            changeDate(0);
+        }
         }
     }
 
@@ -200,12 +213,7 @@ public class MainFrameController {
     }
 
     //删除任务方法，接受一个任务名称参数,和是否进行提示参数，删除附件文件夹
-    void deleteTask(String taskName,Boolean bool){
-        if(!bool){
-            fileTools.removeFiles(fileTools.taskFilePath+"/"+taskName+".properties");
-            fileTools.removeFiles(fileTools.attachesPath+taskName);
-        }
-        else{
+    void deleteTask(String taskName){
             // 创建一个确认弹窗
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("确认");
@@ -218,22 +226,25 @@ public class MainFrameController {
             alert.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.YES) {
                     // 执行删除操作,删除任务文件，附件文件，日志文件
-                    fileTools.removeFiles(fileTools.taskFilePath+"/"+taskName+".properties");
-                    fileTools.removeFiles(fileTools.attachesPath+taskName);
-                    fileTools.removeFiles(fileTools.logPath+"/"+taskName+".txt");
+                    deleteTaskFiles(taskName);
                 }
             });
-        }
-        //更新任务列表
-        showTasks();
+
         //清除现有定时器
         this.timer.cancel();
-        //设定定时器
+        //直接就是一个简单除暴的界面初始化
         try {
-            setTimer();
+            initialize();
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    //清理任务文件
+    void deleteTaskFiles(String taskName){
+        fileTools.removeFiles(fileTools.taskFilePath+"/"+taskName+".properties");
+        fileTools.removeFiles(fileTools.attachesPath+taskName);
+        fileTools.removeFiles(fileTools.logPath+"/"+taskName+".txt");
     }
 
 
@@ -242,9 +253,6 @@ public class MainFrameController {
         //填充任务名称
         ObservableList<String> fileList = fileTools.getFileList(fileTools.taskFilePath);
         tasklist.setItems(fileList);
-        //设置功能性按钮禁用
-        refreshBtn.setDisable(true);
-        removeBtn.setDisable(true);
     }
 
     //向页面中填充邮件信息
@@ -374,8 +382,12 @@ public class MainFrameController {
                     else{
                         try {
                             //清除文件名中的空格
-                            String name = textField.getText().replaceAll(" ","");
-                            saveMail(name+label.getText());
+                            String name = textField.getText().replaceAll(" ","")+label.getText();
+                            saveMail(name);
+                            //展示最近操作的任务的信息
+                            showMail(name);
+                            //设置选中这一项
+                            tasklist.getSelectionModel().select(name);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
@@ -464,7 +476,10 @@ public class MainFrameController {
                             calendar.add(Calendar.DAY_OF_MONTH, 7);
                             date = calendar.getTime();
                         }
-                        sendTask.setName(strs[5]);//执行对应名称的任务
+                        //执行对应名称的任务
+                        if(strs.length>6){sendTask.setName(strs[5]+" "+strs[6]);}
+                        else{sendTask.setName(strs[5]);}
+
                         timer.schedule(sendTask,date,7 * 24 * 60 * 60 * 1000L);
                         //这里设置的每隔7天发送一次，如果此程序不能单次执行时间超过7天则没有意义
                     }
@@ -499,11 +514,25 @@ public class MainFrameController {
             selectedFilePath.removeIf(s -> s.equals(filepath));
         });
     }
-
     //测试方法
-    void example(){
-        System.out.println(selectedFilePath.toString());
+    //日期滑动条被拖动时
+    @FXML
+    void weekChange() {
+        int now = (int) weekSlider.getValue();
+        int change = now-sliderValue;
+        changeDate(change);
     }
+    //改变日期控件的日期
+    void changeDate(int change){
+        LocalDate changeDate = dateText.getValue();
+        changeDate = changeDate.plusDays(change);
+        weekSlider.setVisible(true);
+        dateText.setValue(changeDate);
+        week.setText(dateText.getValue().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.getDefault()));
+        weekSlider.setValue(dateText.getValue().getDayOfWeek().getValue());
+        sliderValue = (int) weekSlider.getValue();
+    }
+
 
 
 }

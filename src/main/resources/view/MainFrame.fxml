@@ -158,6 +158,7 @@
             <Font size="18.0" />
          </font>
       </Button>
+      <Slider fx:id="weekSlider" layoutX="504.0" layoutY="822.0" max="7.0" min="1.0" onMouseReleased="#weekChange" prefHeight="18.0" prefWidth="173.0" />
 
    </children>
 </AnchorPane>

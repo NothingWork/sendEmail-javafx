@@ -86,7 +86,9 @@ public class FileTools {
     //删除文件
     public void removeFiles(String filepath){
         File file = new File(filepath);
-        file.delete();
+        if(file.exists()){
+            file.delete();
+        }
     }
     //文件复制
     public void copyFile(String sourcepath,String targetpath){

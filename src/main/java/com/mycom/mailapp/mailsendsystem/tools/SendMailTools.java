@@ -1,5 +1,7 @@
 package com.mycom.mailapp.mailsendsystem.tools;
 
+import javafx.collections.ObservableList;
+
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.mail.MessagingException;
@@ -161,7 +163,7 @@ public class SendMailTools {
     public List<String> getTime(){
         FileTools fileTools = new FileTools();
         //1.获取到各个任务文件名
-        String[] tasks = fileTools.getFileList(fileTools.taskFilePath).toArray(new String[0]);
+        ObservableList<String> tasks = fileTools.getFileList(fileTools.taskFilePath);
         //2.读取这些文件获取到各个任务的时间节点和他们是否重复发送
         Map<String,String> dataMap;//过渡存放读取信息的map
         List<String> sendDate = new ArrayList<>();//存放多组信息的String数组，包含日期、时、分、秒、是否重复发送、任务名称

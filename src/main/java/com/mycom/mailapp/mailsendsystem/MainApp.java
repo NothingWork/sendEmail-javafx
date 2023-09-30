@@ -135,7 +135,7 @@ public class MainApp extends Application {
         }
     }
 
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) {
         //检查资源完整性
         FileTools fileTools = new FileTools();
         String[] files = {fileTools.taskFilePath, fileTools.attachesPath, fileTools.logPath};
