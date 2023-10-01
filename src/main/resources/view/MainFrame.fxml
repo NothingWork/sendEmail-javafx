@@ -122,7 +122,7 @@
             <Font size="20.0" />
          </font>
       </Label>
-      <TextField fx:id="serverText" layoutX="793.0" layoutY="104.0" prefHeight="41.0" prefWidth="375.0" promptText="必填">
+      <TextField fx:id="serverText" layoutX="793.0" layoutY="104.0" prefHeight="41.0" prefWidth="375.0" promptText="必填(smtp)">
          <font>
             <Font size="20.0" />
          </font>
@@ -133,11 +133,11 @@
             <Font size="20.0" />
          </font>
       </Label>
-      <Button fx:id="removeBtn" layoutX="1202.0" layoutY="447.0" mnemonicParsing="false" onAction="#removeTask" prefHeight="50.0" prefWidth="156.0" text="删除当前任务" textFill="#ff0909">
+      <Button fx:id="removeBtn" layoutX="1202.0" layoutY="447.0" mnemonicParsing="false" onAction="#removeTask" prefHeight="50.0" prefWidth="202.0" text="删除当前任务" textFill="#ff0909">
          <font>
             <Font size="18.0" />
          </font></Button>
-      <Button fx:id="refreshBtn" layoutX="1202.0" layoutY="362.0" mnemonicParsing="false" onAction="#refreshTask" prefHeight="50.0" prefWidth="156.0" text="更新当前任务">
+      <Button fx:id="refreshBtn" layoutX="1202.0" layoutY="362.0" mnemonicParsing="false" onAction="#refreshTask" prefHeight="50.0" prefWidth="202.0" text="更新当前任务">
          <font>
             <Font size="18.0" />
          </font>
@@ -159,6 +159,11 @@
          </font>
       </Button>
       <Slider fx:id="weekSlider" layoutX="504.0" layoutY="822.0" max="7.0" min="1.0" onMouseReleased="#weekChange" prefHeight="18.0" prefWidth="173.0" />
+      <Button fx:id="refreshList" layoutX="1362.0" layoutY="30.0" mnemonicParsing="false" onAction="#showTasks" prefHeight="39.0" prefWidth="145.0" text="刷新">
+         <font>
+            <Font size="19.0" />
+         </font>
+      </Button>
 
    </children>
 </AnchorPane>

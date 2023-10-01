@@ -6,6 +6,7 @@ import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
 import java.io.*;
+import java.util.*;
 
 /**
  * @author Yun
@@ -27,6 +28,15 @@ public class LogsFrameController {
         StringBuilder logs = new StringBuilder();
         File folder = new File(new FileTools().logPath);
         File[] files = folder.listFiles();
+        //创建一个按时间降序排序的treemap用来存储日志
+        Map<String,String> map = new TreeMap<>(new Comparator<String>() {
+            @Override
+            public int compare(String obj1, String obj2) {
+                // 降序排序
+                return obj2.compareTo(obj1);
+            }
+        });
+
         if (files != null) {
             for (File file: files
                  ) {
@@ -34,13 +44,20 @@ public class LogsFrameController {
                     String line;
                     while ((line = br.readLine()) != null) {
                         // 处理每一行文本
-                        logs.append(line).append(System.lineSeparator());
+                        map.put(line.substring(1,20),line);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
+
+        //这里将map.entrySet()转换成list,用于遍历将日志写入窗体中
+        List<Map.Entry<String,String>> list = new ArrayList<Map.Entry<String,String>>(map.entrySet());
+        for(Map.Entry<String,String> mapping:list){
+            logs.append(mapping.getValue()).append(System.lineSeparator());
+        }
+
         logsText.setText(String.valueOf(logs));
     }
 

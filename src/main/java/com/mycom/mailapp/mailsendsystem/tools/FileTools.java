@@ -18,13 +18,13 @@ import java.util.*;
  */
 public class FileTools {
     //任务配置文件存放路径，附件文件夹，执行日志文件夹
-//    public final String logPath = "logs";
-//    public final String taskFilePath="tasks";
-//    public final String attachesPath="attaches/";
-    public final String taskFilePath="src/main/resources/tasks";
-
-    public final String attachesPath="src/main/resources/attaches/";
-    public final String logPath="src/main/resources/logs";
+    public final String logPath = "logs";
+    public final String taskFilePath="tasks";
+    public final String attachesPath="attaches/";
+//    public final String taskFilePath="src/main/resources/tasks";
+//
+//    public final String attachesPath="src/main/resources/attaches/";
+//    public final String logPath="src/main/resources/logs";
 
     //读取某个具体配置文件
     public Map<String,String> readReturnMap(String propertiesFilePath) {

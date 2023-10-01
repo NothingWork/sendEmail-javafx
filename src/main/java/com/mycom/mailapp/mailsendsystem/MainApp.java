@@ -18,8 +18,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.ParseException;
 
 
 public class MainApp extends Application {
@@ -35,7 +33,7 @@ public class MainApp extends Application {
         primaryStage.getIcons().add(new Image("images/sendEmail.png"));
         //生成系统托盘
         SystemTray systemTray = SystemTray.getSystemTray();
-        java.awt.Image image = Toolkit.getDefaultToolkit().getImage("images/icon.png");
+        java.awt.Image image = Toolkit.getDefaultToolkit().getImage("icon.png");
 
         PopupMenu popupMenu = new PopupMenu();
         MenuItem item1 = new MenuItem("主界面");

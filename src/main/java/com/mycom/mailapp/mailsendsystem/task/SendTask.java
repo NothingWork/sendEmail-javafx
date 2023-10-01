@@ -38,6 +38,7 @@ public class SendTask extends TimerTask {
                 );
     }
     public void run(){
+        //执行发送任务
         //编辑日志文本包含事件和执行任务名称
         Date date = new Date();
         // 创建一个SimpleDateFormat对象，指定日期格式
@@ -48,6 +49,7 @@ public class SendTask extends TimerTask {
         //发送邮件
         try {
             //创建日志文件
+            System.out.println("rhis.name"+this.name);
             sendMessage(this.name);
         } catch (MessagingException | UnsupportedEncodingException e) {
             //处理邮件发送失败事件
@@ -55,17 +57,18 @@ public class SendTask extends TimerTask {
             if(sendCount<2){
                 sendCount++;
                 log = "发送失败，重新发送尝试....";
-                run();
             }
             else{
                 //重新发送失败，编辑错误日志信息
-                log = "发送失败,请检查邮件地址，授权码以及服务器地址是否填写正确，并检查attches文件夹保证附件文件完整性";
+                log = "发送失败,请检查邮件地址，授权码以及服务器地址是否填写正确，并检查attaches文件夹保证附件文件完整性";
+                sendCount++;
             }
         }
         finally {
             log ="["+ dateString+"]"+" "+this.name+" "+log;
             //写入日志文件
             fileTools.writeLogs(fileTools.logPath+"/"+this.name+".txt",log);
+            if(sendCount>0&&sendCount<3){run();}
         }
     }
 

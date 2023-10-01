@@ -15,7 +15,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.web.HTMLEditor;
-import javax.mail.MessagingException;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -87,6 +86,8 @@ public class MainFrameController {
     private Slider weekSlider;
     @FXML
     private Button showLogsBtn;
+    @FXML
+    private Button refreshList;
 
     JavaFxTools javaFxTools = new JavaFxTools();
     FileTools fileTools = new FileTools();
@@ -100,14 +101,15 @@ public class MainFrameController {
         //为按钮渲染图标
         javaFxTools.setLabeledImage(
                 new Labeled[]{
-                        attachments, removeBtn, addApplication, clear,refreshBtn,showLogsBtn},
+                        attachments, removeBtn, addApplication, clear,refreshBtn,showLogsBtn,refreshList},
                 new String[]{
                         "images/addAttaches.png",
                         "images/delete.png",
                         "images/addTask.png",
                         "images/clear.png",
                         "images/refresh.png",
-                        "images/logs.png"});
+                        "images/logs.png",
+                        "images/refresh.png",});
         //初始化填充任务列表
         showTasks();
         //设置删除任务按钮和更新任务按钮为禁用状态
@@ -138,8 +140,11 @@ public class MainFrameController {
     @FXML
     void change(MouseEvent event) {
         if(!tasklist.getSelectionModel().isEmpty()){
+            String str = tasklist.getSelectionModel().getSelectedItem();
+            int lastSpaceIndex = str.lastIndexOf(" ");
+            String result = str.substring(0, lastSpaceIndex);
             //填充页面
-            showMail(tasklist.getSelectionModel().getSelectedItem());
+            showMail(result);
             //启用删除按钮和更新任务按钮
             removeBtn.setDisable(false);
             refreshBtn.setDisable(false);
@@ -148,7 +153,7 @@ public class MainFrameController {
 
     //点击完成配置按钮,会创建一个properties文件存放邮件数据
     @FXML
-    void addApplication(ActionEvent Event) throws MessagingException, IOException {
+    void addApplication(ActionEvent Event){
         //调用创建任务方法，新建任务传入任务名称为空
         addTasks("");
     }
@@ -184,15 +189,21 @@ public class MainFrameController {
             //1.调用新建任务，将当前选中任务名称传入
             String str = tasklist.getSelectionModel().getSelectedItem();
             String[] strs = str.split(" ");
+            int lastSpaceIndex = str.lastIndexOf(" ");
+            str= str.substring(0, lastSpaceIndex);
             int before = tasklist.getItems().size();
             addTasks(strs[0]);
             //2.刷新任务列表，检查任务数量是否加一
             int after = tasklist.getItems().size();
             //3.数量加一则删除旧的任务，数量不变则直接覆盖旧的任务
+            if(strs.length>2){
+
+            }
             if(after>before){
                 deleteTaskFiles(str);
-                showTasks();
             }
+            fileTools.removeFiles(fileTools.logPath+"/"+str+".txt");
+            showTasks();
         }
     }
     //当日期控件被选择时，填充选中的日期为周几的提示信息
@@ -210,6 +221,14 @@ public class MainFrameController {
     void showLogs(ActionEvent event) {
         // 加载设置界面
         new MainApp().initLogsFrame();
+    }
+
+    //日期滑动条被拖动时
+    @FXML
+    void weekChange() {
+        int now = (int) weekSlider.getValue();
+        int change = now-sliderValue;
+        changeDate(change);
     }
 
     //删除任务方法，接受一个任务名称参数,和是否进行提示参数，删除附件文件夹
@@ -249,10 +268,17 @@ public class MainFrameController {
 
 
     //填充右侧任务列表,并将两个操作按钮设为禁用状态
+    @FXML
     void showTasks(){
         //填充任务名称
         ObservableList<String> fileList = fileTools.getFileList(fileTools.taskFilePath);
-        tasklist.setItems(fileList);
+        try {
+            tasklist.setItems(javaFxTools.setTaskStage(fileList));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        refreshBtn.setDisable(true);
+        removeBtn.setDisable(true);
     }
 
     //向页面中填充邮件信息
@@ -346,7 +372,7 @@ public class MainFrameController {
             //创建一个为任务命名的弹窗
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION); // 创建一个信息类型的对话框
             alert.setTitle("提示");
-            alert.setHeaderText("请确认任务名称");
+            alert.setHeaderText("请确认任务名称(同名任务将会直接被覆盖)");
             alert.getButtonTypes().setAll(ButtonType.APPLY, ButtonType.CANCEL);
             //获取到日期是周几
             String Week = dateText.getValue().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.getDefault());
@@ -477,7 +503,8 @@ public class MainFrameController {
                             date = calendar.getTime();
                         }
                         //执行对应名称的任务
-                        if(strs.length>6){sendTask.setName(strs[5]+" "+strs[6]);}
+                        if(strs.length>6){
+                            sendTask.setName(strs[5]+" "+strs[6]);}
                         else{sendTask.setName(strs[5]);}
 
                         timer.schedule(sendTask,date,7 * 24 * 60 * 60 * 1000L);
@@ -486,7 +513,10 @@ public class MainFrameController {
                 }
                 //日期未超过则直接新建定时任务
                 else{
-                    sendTask.setName(strs[5]);
+                    //执行对应名称的任务
+                    if(strs.length>6){
+                        sendTask.setName(strs[5]+" "+strs[6]);}
+                    else{sendTask.setName(strs[5]);}
                     timer.schedule(sendTask,date);
                 }
             }
@@ -515,13 +545,7 @@ public class MainFrameController {
         });
     }
     //测试方法
-    //日期滑动条被拖动时
-    @FXML
-    void weekChange() {
-        int now = (int) weekSlider.getValue();
-        int change = now-sliderValue;
-        changeDate(change);
-    }
+
     //改变日期控件的日期
     void changeDate(int change){
         LocalDate changeDate = dateText.getValue();
@@ -532,7 +556,5 @@ public class MainFrameController {
         weekSlider.setValue(dateText.getValue().getDayOfWeek().getValue());
         sliderValue = (int) weekSlider.getValue();
     }
-
-
 
 }

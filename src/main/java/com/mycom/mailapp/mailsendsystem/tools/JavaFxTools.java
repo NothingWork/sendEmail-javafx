@@ -1,5 +1,7 @@
 package com.mycom.mailapp.mailsendsystem.tools;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -7,6 +9,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.web.HTMLEditor;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -66,9 +72,30 @@ public class JavaFxTools {
             labeleds[i].setGraphic(imageView);
         }
     }
-    //根据各个任务的执行时间，是否重复添加对应的状态
-    public void getTaskStage(){
-
+    //根据各个任务的执行情况，填入对应的状态
+    public ObservableList<String> setTaskStage(ObservableList<String> oldlist) throws IOException {
+        ObservableList<String> newlist = FXCollections.observableArrayList();
+        for (String taskname:oldlist
+             ) {
+            File logfile = new File(new FileTools().logPath+"/"+taskname+".txt");
+            if(!logfile.exists()){
+                newlist.add(taskname+" "+"(未执行)");
+            }
+            else{
+                //获取到最后一行文本,进行状态判断
+                String line;String lastline = null;
+                try (BufferedReader br = new BufferedReader(new FileReader(logfile))) {
+                    while ((line = br.readLine()) != null) {
+                        //不是最后一行，接着读取
+                        lastline = line;
+                    }
+                }
+                String[] strs = lastline.split(" ");
+                if(strs[strs.length-1].equals("任务执行完成")){newlist.add(taskname+" "+"(发送成功)");}
+                else{newlist.add(taskname+" "+"(发送失败)");}
+            }
+        }
+        return newlist;
     }
 
 }
